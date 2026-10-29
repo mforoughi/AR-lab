@@ -43,5 +43,10 @@
     "source": "encoded-assets/dist/assets/tracking-plan.png.base64",
     "destination": "dist/assets/tracking-plan.png",
     "sha256": "9621eba5b0ae57dda792019f9995ee2c3aba61272eac1b93b8e2a4735a9e8fe3"
+  },
+  {
+    "source": "encoded-assets/dist/assets/poster-model.jpg.base64",
+    "destination": "dist/assets/poster-model.jpg",
+    "sha256": "96b8e9f8c476467b0023abcd574a9a92317dfb614137e8c1c3ca759bb996a5f4"
   }
 ]

@@ -7,6 +7,7 @@ for(const asset of assets){
  if(createHash('sha256').update(data).digest('hex')!==asset.sha256)throw new Error('Asset integrity check failed: '+asset.destination);
  await mkdir(dirname(asset.destination),{recursive:true});await writeFile(asset.destination,data);
 }
+await import('./prepare-poster.mjs');
 await mkdir('dist/vendor/8thwall',{recursive:true});
 await cp('node_modules/@8thwall/engine/dist','dist/vendor/8thwall',{recursive:true});
 await cp('node_modules/@8thwall/engine/LICENSE','dist/vendor/8thwall/LICENSE');

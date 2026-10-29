@@ -1,9 +1,16 @@
+import {advanceDay} from './ar-state.js?v=8thwall-3';
 import {tasks,totalDays,taskProgress,taskState} from './schedule-data.js';
 const $=s=>document.querySelector(s);
 let THREE,OrbitControls,SVGRenderer,GLTFLoader,software=false,renderer,scene,camera,orbit,model,building,planPlane,modelInfo,arEngine;
 let day=totalDays,playing=false,last=0,arMode=false,busy=false,cutaway=false,selectedId=null;
 const parts=[];
-let followedTask=null;
+let followedTask=null,trackingReady=false;
+const params=new URLSearchParams(location.search);
+const posterSheet=params.get('sheet')==='poster';
+const autoAR=params.get('mode')!=='3d';
+if(autoAR)document.body.classList.add('ar-active');
+$('#sheetType').value=posterSheet?'poster':'plan';
+$('#sheetType').onchange=e=>{const url=new URL(location.href);url.searchParams.set('sheet',e.target.value);location.href=url.href;};
 const geometryLabel=t=>t.hasGeometry?'Model linked':[14,19,20].includes(t.id)?'No geometry required':'Not modeled';
 $('#rows').innerHTML=tasks.map(t=>`<button class="row ${t.hasGeometry?'':'schedule-only'}" data-task="${t.id}" aria-label="View activity ${t.id}: ${t.name}"><span class="label"><span class="num">${String(t.id).padStart(2,'0')}</span><span>${t.name}<small>${geometryLabel(t)}</small></span></span><span class="track"><span class="bar" style="left:${t.start/totalDays*100}%;width:${t.duration/totalDays*100}%"><span class="fill"></span></span><span class="cursor"></span></span></button>`).join('');
 const rowElements=[...document.querySelectorAll('.row')];
@@ -64,6 +71,7 @@ async function createModel(){
  planPlane.rotation.x=-Math.PI/2;planPlane.position.set((p.width/2-(p.left+p.right)/2)/ppm,-.13,(p.height/2-(p.top+p.bottom)/2)/ppm);model.add(planPlane);
 }
 function preview(){
+ $('#preview').classList.add('selected');$('#ar').classList.remove('selected');
  const container=$('#scene');software=false;
  try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));}
  catch(e){software=true;renderer=new SVGRenderer();let loop;renderer.setAnimationLoop=fn=>{cancelAnimationFrame(loop);if(fn){const run=t=>{fn(t);loop=requestAnimationFrame(run);};loop=requestAnimationFrame(run);}};renderer.dispose=()=>{};$('#ar').disabled=true;}
@@ -75,43 +83,52 @@ function preview(){
  lights(scene);resize();renderer.setAnimationLoop(tick);
  $('#mode').textContent=software?'3D compatibility preview':'Drag to orbit · Pinch to zoom';
 }
-function tick(t,render=true){const dt=last?Math.min((t-last)/1000,.1):0;last=t;if(playing){day=Math.min(totalDays,day+dt*+$('#speed').value);if(day>=totalDays)setPlaying(false);update();}orbit?.update();if(render)renderer.render(scene,camera);}
+function tick(t,render=true){const dt=last?Math.min((t-last)/1000,.1):0;last=t;if(playing){day=advanceDay(day,dt,+$('#speed').value,totalDays,!arMode||trackingReady);if(day>=totalDays)setPlaying(false);update();}orbit?.update();if(render)renderer.render(scene,camera);}
 async function startAR(){
- if(busy||arMode)return;busy=true;$('#ar').disabled=true;
+ if(busy||arMode)return;busy=true;$('#ar').disabled=true;$('#preview').disabled=true;
  try{
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)throw new Error('Open this HTTPS page directly in Safari or Chrome.');
   $('#message').textContent='Loading 8th Wall. Allow camera access when asked.';
-  const {loadEngine,startTracking}=await import('./xr-adapter.js?v=8thwall-2');await loadEngine(THREE);
-  renderer.setAnimationLoop(null);orbit?.dispose();orbit=null;renderer.dispose();$('#scene').replaceChildren();
-  arMode=true;document.body.classList.add('ar-active');planPlane.visible=false;
+  const {loadEngine,startTracking}=await import('./xr-adapter.js?v=8thwall-3');await loadEngine(THREE);
+  renderer?.setAnimationLoop(null);orbit?.dispose();orbit=null;renderer?.dispose();$('#scene').replaceChildren();
+  arMode=true;trackingReady=false;document.body.classList.add('ar-active');planPlane.visible=false;
+  $('#resetView').textContent='Retry AR';
   arEngine=await startTracking({THREE,container:$('#scene'),model,info:modelInfo,
+   targetPath:posterSheet?'./image-targets/law-office-poster.json':'./image-targets/law-office.json',
+   onRecover:()=>{if(arMode&&!busy)restartAR();},
    onReady:r=>{({scene,camera,renderer}=r);lights(scene);},
    onStatus:status=>{
-    const messages={camera:['Opening camera','Allow camera access when asked.'],loading:['Loading plan','Camera ready. Preparing the tracking plan…'],scanning:['Plan ready · Scanning','Keep the whole printed plan in view, including the upper rooms. Hold still until “Plan tracked” appears.']};
+    const messages={camera:['Opening camera','Allow camera access when asked.'],loading:['Loading plan','Camera ready. Preparing the tracking plan…'],scanning:['Plan ready · Scanning','Keep the whole selected sheet in view. Hold still until “Plan tracked” appears.']};
     const [label,message]=messages[status];$('#mode').textContent='8th Wall · '+label;$('#message').textContent=message;
    },
    onError:e=>{console.error(e);stopAR();$('#message').textContent='AR stopped: '+e.message;},
-   onFound:()=>{$('#message').textContent='';$('#mode').textContent='8th Wall · Plan tracked';},
-   onLost:()=>{$('#message').textContent='Point at the full tracking plan';$('#mode').textContent='Looking for plan';},
+   onFound:()=>{trackingReady=true;$('#message').textContent='';$('#mode').textContent='8th Wall · Plan tracked';},
+   onLost:()=>{trackingReady=false;$('#message').textContent='Tracking lost · playback waiting. Point at the full sheet.';$('#mode').textContent='Looking for plan';},
    onFrame:t=>tick(t,false)});
   $('#preview').classList.remove('selected');$('#ar').classList.add('selected');
- }catch(e){console.error(e);await stopAR();$('#message').textContent='AR could not start: '+e.message;}
- finally{busy=false;$('#ar').disabled=software;}
+ }catch(e){console.error(e);if(arMode)await stopAR();else{document.body.classList.remove('ar-active');if(!renderer)preview();}$('#message').textContent='AR could not start: '+e.message;}
+ finally{busy=false;$('#ar').disabled=software;$('#preview').disabled=false;}
+}
+async function restartAR(){
+ if(busy)return;
+ arEngine?.stop();arEngine=null;renderer=null;arMode=false;trackingReady=false;last=0;
+ await startAR();
 }
 async function stopAR(){
- arEngine?.stop();arEngine=null;
+ arEngine?.stop();arEngine=null;setPlaying(false);
  if(!arMode)return;
- arMode=false;document.body.classList.remove('ar-active');$('#scene').replaceChildren();preview();
+ arMode=false;trackingReady=false;$('#resetView').textContent='Reset view ⤾';document.body.classList.remove('ar-active');$('#scene').replaceChildren();preview();
  $('#preview').classList.add('selected');$('#ar').classList.remove('selected');$('#message').textContent='';
 }
 window.addEventListener('pagehide',()=>{arEngine?.stop();});
+window.addEventListener('pageshow',e=>{if(e.persisted&&arMode&&!busy)restartAR();});
 
 $('#ar').onclick=startAR;$('#preview').onclick=()=>{if(!busy)stopAR();};
-$('#resetView').onclick=()=>{if(orbit){camera.position.set(12,10,13);orbit.target.set(0,1.2,0);}};
+$('#resetView').onclick=()=>{if(arMode){if(!busy)restartAR();return;}if(orbit){camera.position.set(12,10,13);orbit.target.set(0,1.2,0);}};
 window.addEventListener('resize',resize);update();
 try{
  THREE=await import('three');({OrbitControls}=await import('three/addons/OrbitControls.js'));({SVGRenderer}=await import('three/addons/SVGRenderer.js'));({GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js'));
- await createModel();preview();update();$('#ar').disabled=software;
- $('#message').textContent=software?'WebGL is disabled in this browser. Use Safari or Chrome on your phone for AR.':'';
+ await createModel();update();
+ if(autoAR)await startAR();else{preview();$('#ar').disabled=software;$('#message').textContent=software?'WebGL is disabled in this browser. Use Safari or Chrome on your phone for AR.':'';}
  document.body.dataset.modelReady='true';
 }catch(e){$('#message').textContent='The building could not load: '+(e?.message||'Unknown error')+'. Reload the page to retry.';$('#ar').disabled=true;console.error(e);}

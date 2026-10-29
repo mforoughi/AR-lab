@@ -7,7 +7,7 @@ import {startTracking} from '../dist/xr-adapter.js';
 const target = JSON.parse(await readFile(new URL('../dist/image-targets/law-office.json', import.meta.url)));
 
 function setup() {
-  const h = {status: [], errors: [], stopped: 0, cleared: 0, disposed: 0, found: 0, lost: 0, frames: 0};
+  const h = {status: [], errors: [], stopped: 0, cleared: 0, disposed: 0, found: 0, lost: 0, frames: 0, recovered: 0};
   globalThis.window = new EventTarget();
   window.devicePixelRatio = 3;
   globalThis.location = {href: 'https://mforoughi.github.io/AR-lab/'};
@@ -42,7 +42,7 @@ function setup() {
   h.event = (name, detail) => h.pipeline.listeners.find(l => l.event === 'reality.' + name).process({detail});
   h.start = () => startTracking({THREE, container: h.container, model: h.model, info: {pixelsPerMetre: 21.71925164845},
     onReady() {h.sceneReady = true;}, onStatus: s => h.status.push(s), onError: e => h.errors.push(e),
-    onFound() {h.found++;}, onLost() {h.lost++;}, onFrame() {h.frames++;},
+    onRecover() {h.recovered++;}, onFound() {h.found++;}, onLost() {h.lost++;}, onFrame() {h.frames++;},
   });
   h.complete = () => {h.pipeline.onStart(); h.event('imagescanning', {imageTargets: [target]});};
   return h;
@@ -120,4 +120,15 @@ test('runtime graphics failure stops once and reports an actionable error', asyn
   assert.equal(h.errors.length, 1); assert.match(h.errors[0].message, /start AR again/);
   assert.equal(h.stopped, 1); assert.ok(h.disconnected && h.removed);
   h.pipeline.onUpdate(); assert.equal(h.frames, 0);
+});
+
+
+test('adapter requests recovery after a real loss, but cancels it when tracking returns', async t => {
+  t.mock.timers.enable({apis:['setTimeout']});
+  const h=setup();const pending=h.start();await setImmediate();h.complete();const handle=await pending;
+  const pose={name:target.name,position:{x:0,y:0,z:0},rotation:{x:0,y:0,z:0,w:1},scale:1,scaledWidth:.75};
+  h.event('imagefound',pose);h.event('imagelost',{name:target.name});
+  t.mock.timers.tick(3000);h.event('imageupdated',pose);t.mock.timers.tick(6000);assert.equal(h.recovered,0);
+  h.event('imagelost',{name:target.name});t.mock.timers.tick(7000);assert.equal(h.recovered,1);
+  handle.stop();t.mock.timers.tick(60000);assert.equal(h.recovered,1);
 });

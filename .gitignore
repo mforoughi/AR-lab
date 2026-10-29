@@ -11,3 +11,9 @@ dist/assets/Law_Office_Draft_Construction_Schedule.xlsx
 dist/assets/law-office.glb
 dist/assets/law-office-plan.png
 dist/assets/tracking-plan.png
+
+dist/assets/poster-model.jpg
+dist/assets/poster-model.png
+dist/assets/tracking-poster.png
+dist/image-targets/law-office-poster*
+.openai/

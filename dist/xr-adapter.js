@@ -1,3 +1,4 @@
+import {createTrackingRecovery, targetAlignment} from './ar-state.js?v=8thwall-3';
 // 8th Wall 0.1.0, MIT image tracking engine. No hosted account required.
 let loading;
 export function loadEngine(THREE) {
@@ -29,9 +30,9 @@ export function loadEngine(THREE) {
   return loading;
 }
 
-export async function startTracking({THREE, container, model, info, onReady, onFound, onLost, onFrame, onStatus = () => {}, onError = () => {}}) {
+export async function startTracking({THREE, container, model, info, onReady, onFound, onLost, onFrame, onStatus = () => {}, onError = () => {}, onRecover = () => {}, targetPath = './image-targets/law-office.json'}) {
   const XR8 = await loadEngine(THREE);
-  const response = await fetch('./image-targets/law-office.json');
+  const response = await fetch(targetPath);
   if (!response.ok) throw new Error('Tracking plan could not load. Check your connection and retry.');
   const target = await response.json();
   target.imagePath = new URL(target.imagePath, location.href).href;
@@ -67,9 +68,11 @@ export async function startTracking({THREE, container, model, info, onReady, onF
   const observer = new ResizeObserver(resize);
   observer.observe(container);
   window.addEventListener('resize', resize);
+  const recovery = createTrackingRecovery({onRecover});
   const stop = () => {
     if (stopped) return;
     stopped = true;
+    recovery.stop();
     clearTimeout(timer);
     observer.disconnect();
     window.removeEventListener('resize', resize);
@@ -101,11 +104,13 @@ export async function startTracking({THREE, container, model, info, onReady, onF
   };
   const pose = ({detail: d}) => {
     if (d.name !== target.name || !anchor || failed || stopped) return;
+    const newlyFound = !anchor.visible;
     anchor.position.copy(d.position);
     anchor.quaternion.copy(d.rotation);
     anchor.scale.setScalar(d.scale * d.scaledWidth);
     anchor.visible = true;
-    onFound();
+    recovery.found();
+    if (newlyFound) onFound();
   };
   try {
     XR8.addCameraPipelineModules([
@@ -123,8 +128,9 @@ export async function startTracking({THREE, container, model, info, onReady, onF
           scene.add(anchor);
           anchor.add(model);
           model.rotation.set(Math.PI / 2, 0, 0);
-          model.scale.setScalar(info.pixelsPerMetre / 774);
-          model.position.set(1 / 774, -5.5 / 774, .001);
+          const alignment = targetAlignment(target, info);
+          model.scale.setScalar(alignment.scale);
+          model.position.set(alignment.x, alignment.y, .001);
           onReady({scene, camera, renderer});
           started = true;
           onStatus('loading');
@@ -154,6 +160,7 @@ export async function startTracking({THREE, container, model, info, onReady, onF
             if (detail.name !== target.name || stopped || failed) return;
             if (anchor) anchor.visible = false;
             onLost();
+            recovery.lost();
           }},
         ],
       },
