@@ -81,22 +81,26 @@ async function startAR(){
  try{
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)throw new Error('Open this HTTPS page directly in Safari or Chrome.');
   $('#message').textContent='Loading 8th Wall. Allow camera access when asked.';
-  const {loadEngine,startTracking}=await import('./xr-adapter.js');await loadEngine(THREE);
+  const {loadEngine,startTracking}=await import('./xr-adapter.js?v=8thwall-2');await loadEngine(THREE);
   renderer.setAnimationLoop(null);orbit?.dispose();orbit=null;renderer.dispose();$('#scene').replaceChildren();
   arMode=true;document.body.classList.add('ar-active');planPlane.visible=false;
   arEngine=await startTracking({THREE,container:$('#scene'),model,info:modelInfo,
    onReady:r=>{({scene,camera,renderer}=r);lights(scene);},
+   onStatus:status=>{
+    const messages={camera:['Opening camera','Allow camera access when asked.'],loading:['Loading plan','Camera ready. Preparing the tracking plan…'],scanning:['Plan ready · Scanning','Keep the whole printed plan in view, including the upper rooms. Hold still until “Plan tracked” appears.']};
+    const [label,message]=messages[status];$('#mode').textContent='8th Wall · '+label;$('#message').textContent=message;
+   },
+   onError:e=>{console.error(e);stopAR();$('#message').textContent='AR stopped: '+e.message;},
    onFound:()=>{$('#message').textContent='';$('#mode').textContent='8th Wall · Plan tracked';},
    onLost:()=>{$('#message').textContent='Point at the full tracking plan';$('#mode').textContent='Looking for plan';},
    onFrame:t=>tick(t,false)});
-  $('#preview').classList.remove('selected');$('#ar').classList.add('selected');$('#mode').textContent='8th Wall · Looking for plan';$('#message').textContent='Point at the new tracking sheet, then press Play.';
+  $('#preview').classList.remove('selected');$('#ar').classList.add('selected');
  }catch(e){console.error(e);await stopAR();$('#message').textContent='AR could not start: '+e.message;}
  finally{busy=false;$('#ar').disabled=software;}
 }
 async function stopAR(){
  arEngine?.stop();arEngine=null;
  if(!arMode)return;
- window.XR8?.stop();window.XR8?.clearCameraPipelineModules();
  arMode=false;document.body.classList.remove('ar-active');$('#scene').replaceChildren();preview();
  $('#preview').classList.add('selected');$('#ar').classList.remove('selected');$('#message').textContent='';
 }

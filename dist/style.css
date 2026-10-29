@@ -10,6 +10,9 @@
 
 .chart{overflow-x:hidden}.track{overflow:hidden}
 
+/* The XR renderer writes inline pixel sizes; its buffer and CSS size differ on phones. */
+#scene canvas.ar-canvas{width:100%!important;height:100%!important;display:block}
+
 /* Compact activity label and more camera space. */
 .stats{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;width:auto;max-width:calc(100% - 28px);padding:7px 10px;pointer-events:none}
 .stats>span,.stats small{display:none}.stats strong{font-size:12px;line-height:1.3;margin:0;max-width:260px}.stats b{font-size:13px}.stats div span{font-size:8px}
