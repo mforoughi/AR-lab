@@ -47,6 +47,6 @@
   {
     "source": "encoded-assets/dist/assets/poster-model.jpg.base64",
     "destination": "dist/assets/poster-model.jpg",
-    "sha256": "96b8e9f8c476467b0023abcd574a9a92317dfb614137e8c1c3ca759bb996a5f4"
+    "sha256": "0661ab91f043347414197369a21e157a21d0b8a3e498c3a20c2736d2ef48279a"
   }
 ]

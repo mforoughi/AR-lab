@@ -1,4 +1,4 @@
-import {createTrackingRecovery, targetAlignment} from './ar-state.js?v=8thwall-3';
+import {createTrackingRecovery, targetAlignment} from './ar-state.js?v=8thwall-4';
 // 8th Wall 0.1.0, MIT image tracking engine. No hosted account required.
 let loading;
 export function loadEngine(THREE) {

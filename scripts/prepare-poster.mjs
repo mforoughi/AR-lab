@@ -30,7 +30,7 @@ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${he
 <text x="120" y="1762" font-size="23">The University of Southern Mississippi</text>
 <rect x="90" y="1810" width="660" height="450" rx="12" fill="#f1f2ea"/>
 <image href="${modelURI}" x="105" y="1820" width="630" height="385" preserveAspectRatio="xMidYMid meet"/>
-<text x="120" y="2231" font-size="21" font-weight="bold">YOUR MODEL / ROOF &amp; UPPER SLAB HIDDEN</text>
+<text x="120" y="2231" font-size="21" font-weight="bold">YOUR MODEL / COMPLETE BUILDING</text>
 <text x="800" y="1845" font-size="24" font-weight="bold">BUILD SEQUENCE</text>
 <path d="M855 1865V2185M1035 1865V2185M1215 1865V2185" stroke="#cbd5c9" stroke-width="2"/>
 ${bars}

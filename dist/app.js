@@ -1,4 +1,4 @@
-import {advanceDay} from './ar-state.js?v=8thwall-3';
+import {advanceDay} from './ar-state.js?v=8thwall-4';
 import {tasks,totalDays,taskProgress,taskState} from './schedule-data.js';
 const $=s=>document.querySelector(s);
 let THREE,OrbitControls,SVGRenderer,GLTFLoader,software=false,renderer,scene,camera,orbit,model,building,planPlane,modelInfo,arEngine;
@@ -89,7 +89,7 @@ async function startAR(){
  try{
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)throw new Error('Open this HTTPS page directly in Safari or Chrome.');
   $('#message').textContent='Loading 8th Wall. Allow camera access when asked.';
-  const {loadEngine,startTracking}=await import('./xr-adapter.js?v=8thwall-3');await loadEngine(THREE);
+  const {loadEngine,startTracking}=await import('./xr-adapter.js?v=8thwall-4');await loadEngine(THREE);
   renderer?.setAnimationLoop(null);orbit?.dispose();orbit=null;renderer?.dispose();$('#scene').replaceChildren();
   arMode=true;trackingReady=false;document.body.classList.add('ar-active');planPlane.visible=false;
   $('#resetView').textContent='Retry AR';
