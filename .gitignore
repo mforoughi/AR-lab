@@ -1,0 +1,13 @@
+node_modules/
+dist/vendor/8thwall/
+
+# Binary assets are restored and hash-checked by scripts/build.mjs
+dist/qr.png
+dist/image-targets/law-office_thumbnail.png
+dist/image-targets/law-office_luminance.png
+dist/image-targets/law-office_original.png
+dist/image-targets/law-office_cropped.png
+dist/assets/Law_Office_Draft_Construction_Schedule.xlsx
+dist/assets/law-office.glb
+dist/assets/law-office-plan.png
+dist/assets/tracking-plan.png

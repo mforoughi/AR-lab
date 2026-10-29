@@ -1,0 +1,23 @@
+{
+  "imagePath": "image-targets/law-office_luminance.png",
+  "metadata": null,
+  "name": "law-office",
+  "type": "PLANAR",
+  "properties": {
+    "left": 0,
+    "top": 0,
+    "width": 774,
+    "height": 1032,
+    "isRotated": false,
+    "originalWidth": 774,
+    "originalHeight": 1032
+  },
+  "resources": {
+    "originalImage": "law-office_original.png",
+    "croppedImage": "law-office_cropped.png",
+    "thumbnailImage": "law-office_thumbnail.png",
+    "luminanceImage": "law-office_luminance.png"
+  },
+  "created": 1793307334549,
+  "updated": 1793307334549
+}

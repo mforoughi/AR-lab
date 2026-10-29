@@ -1,0 +1,33 @@
+{
+  "title": "Law Office",
+  "meshCount": 504,
+  "units": "metres",
+  "size": [
+    31.76905059814453,
+    9.347199752926826,
+    28.31464958190918
+  ],
+  "width": 31.769050387573245,
+  "depth": 28.31464961242676,
+  "height": 9.347199752926826,
+  "plan": {
+    "width": 773,
+    "height": 660,
+    "left": 43,
+    "right": 733,
+    "top": 28,
+    "bottom": 643
+  },
+  "pixelsPerMetre": 21.719251648450275,
+  "alignment": {
+    "scale": 0.02809735012736129,
+    "x": 0.0019404915912031048,
+    "y": -0.0071151358344113845
+  },
+  "source": "LawOfficeEx6-3-3DView-{3D}.fbx",
+  "appearance": "Teaching colors applied by component group; original Revit textures were not supplied.",
+  "notes": [
+    "The elevated slab is at about 4.06 m above Level 1.",
+    "Foundation, primary-frame and MEP geometry were not identified in this export."
+  ]
+}

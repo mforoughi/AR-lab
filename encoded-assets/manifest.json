@@ -1,0 +1,47 @@
+[
+  {
+    "source": "encoded-assets/dist/qr.png.base64",
+    "destination": "dist/qr.png",
+    "sha256": "b796b4bc043492670164cd7ff25bbdcede5b80451b1ea5b7790df9c94e208a8a"
+  },
+  {
+    "source": "encoded-assets/dist/image-targets/law-office_thumbnail.png.base64",
+    "destination": "dist/image-targets/law-office_thumbnail.png",
+    "sha256": "264852b3641b4ed799376dd6adbb5075c1e10ed62e80e92f5f30e287aa1e9999"
+  },
+  {
+    "source": "encoded-assets/dist/image-targets/law-office_luminance.png.base64",
+    "destination": "dist/image-targets/law-office_luminance.png",
+    "sha256": "0bade501d7a3000a3c6a745253146ea25a8edf3825fd195324496df68f4ea2a7"
+  },
+  {
+    "source": "encoded-assets/dist/image-targets/law-office_original.png.base64",
+    "destination": "dist/image-targets/law-office_original.png",
+    "sha256": "9621eba5b0ae57dda792019f9995ee2c3aba61272eac1b93b8e2a4735a9e8fe3"
+  },
+  {
+    "source": "encoded-assets/dist/image-targets/law-office_cropped.png.base64",
+    "destination": "dist/image-targets/law-office_cropped.png",
+    "sha256": "9621eba5b0ae57dda792019f9995ee2c3aba61272eac1b93b8e2a4735a9e8fe3"
+  },
+  {
+    "source": "encoded-assets/dist/assets/Law_Office_Draft_Construction_Schedule.xlsx.base64",
+    "destination": "dist/assets/Law_Office_Draft_Construction_Schedule.xlsx",
+    "sha256": "c64464fdf90a9bfdf6b45cb442a1de36558be91678e5297d9b914680b7ff0abf"
+  },
+  {
+    "source": "encoded-assets/dist/assets/law-office.glb.base64",
+    "destination": "dist/assets/law-office.glb",
+    "sha256": "7c52f5e6503c0859524e3f4889f8d16d81fb4f0b44fe4c9bd203218a3181b006"
+  },
+  {
+    "source": "encoded-assets/dist/assets/law-office-plan.png.base64",
+    "destination": "dist/assets/law-office-plan.png",
+    "sha256": "2e64dae3abeb47fd105ed2d14432d0c28a827166dab69759987f6a72f35c1ede"
+  },
+  {
+    "source": "encoded-assets/dist/assets/tracking-plan.png.base64",
+    "destination": "dist/assets/tracking-plan.png",
+    "sha256": "9621eba5b0ae57dda792019f9995ee2c3aba61272eac1b93b8e2a4735a9e8fe3"
+  }
+]

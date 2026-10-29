@@ -1,0 +1,13 @@
+{
+  "name": "construction-ar-lab",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "qrcode": "^1.5.4",
+    "three": "0.160.0"
+  },
+  "dependencies": {
+    "@8thwall/engine": "^0.1.0",
+    "@8thwall/image-target-cli": "^1.0.0"
+  }
+}
