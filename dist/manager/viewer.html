@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Project · Construction AR Lab</title><script type="importmap">{"imports":{"three":"../vendor/three/three.module.js","three/addons/":"../vendor/three/addons/"}}</script><style>*{box-sizing:border-box}body{margin:0;background:#edf0e9;color:#183c35;font:14px system-ui}header{height:64px;padding:12px 20px;background:white;display:flex;align-items:center;justify-content:space-between;gap:10px}header strong{display:block}header small{font-size:10px;letter-spacing:1.5px;color:#6d8075}button,select{border:1px solid #cbd7ca;background:white;color:#183c35;border-radius:6px;padding:9px 12px;cursor:pointer}button:disabled,select:disabled{opacity:.5;cursor:wait}#retry{display:block;margin:10px auto 0}button.active{background:#183c35;color:white}#stage{height:calc(100dvh - 146px);position:relative;min-height:180px}#scene{position:absolute;inset:0}#scene canvas{display:block;width:100%!important;height:100%!important}#message{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:#fffffff0;padding:10px 16px;border-radius:8px;font-size:12px;text-align:center;max-width:90%;pointer-events:auto}#scheduleNotice{position:absolute;left:12px;right:12px;top:12px;padding:10px;background:#fff2cf;color:#684b08;font-size:12px;border-radius:6px}#controls{padding:13px 20px;background:white;display:flex;gap:12px;align-items:center;min-height:82px}#controls input{flex:1;min-width:50px;accent-color:#183c35}#task{font-size:11px;max-width:220px}body.edit header{display:none}body.edit #stage{height:calc(100dvh - 62px)}body.edit #controls{min-height:62px;padding:8px}a{color:inherit;font-size:12px}#error{padding:35px;color:#873e31}#loading{padding:30px}#ar{background:#183c35;color:white}@media(max-width:600px){header{padding:9px 12px}header strong{font-size:12px}header button{font-size:11px;padding:8px}#task{max-width:95px;font-size:10px}#controls{padding:10px;gap:7px}#controls button,#controls select{font-size:11px;padding:9px}}[hidden]{display:none!important}</style></head><body><header><div><small>CONSTRUCTION AR LAB</small><strong id="title">Loading project…</strong></div><div><button id="preview" disabled>3D</button> <button id="ar" disabled>Start AR</button> <a id="sheetLink" target="_blank">Print sheet ↗</a></div></header><div id="stage"><div id="scene"></div><div id="scheduleNotice" role="status" hidden></div><div id="message" role="status" aria-live="polite">Starting viewer…</div></div><div id="controls"><button id="play" disabled>▶</button><input id="timeline" disabled type="range" min="0" max="1" step=".01" value="1" aria-label="Schedule timeline"><span id="task">Complete model</span><select id="speed" disabled aria-label="Playback speed"><option value="1">1× · 25s</option><option value="2">2×</option><option value="4">4×</option></select><button id="complete" disabled>Complete</button></div><script>
+(function () {
+  var message = document.getElementById('message');
+  var timer;
+  function fail(text) {
+    clearTimeout(timer);
+    document.getElementById('title').textContent = 'Unable to open project';
+    document.querySelectorAll('button, input, select').forEach(function (el) { el.disabled = true; });
+    message.textContent = text || 'The viewer could not start. Check your connection and reload.';
+    var retry = document.createElement('button');
+    retry.id = 'retry'; retry.textContent = 'Reload viewer';
+    retry.onclick = function () { location.reload(); };
+    message.appendChild(retry);
+  }
+  window.viewerLoading = {
+    started: function () { clearTimeout(timer); },
+    ready: function () {
+      clearTimeout(timer);
+      ['preview', 'ar', 'complete'].forEach(function (id) { document.getElementById(id).disabled = false; });
+    },
+    fail: fail
+  };
+  timer = setTimeout(function () { fail('The viewer is taking too long to start. Check your connection and reload.'); }, 45000);
+  import('./viewer.js?v=github-1').catch(function (error) {
+    console.error('Viewer startup failed:', error);
+    fail('The viewer could not start. Check your connection and reload.');
+  });
+})();
+</script></body></html>

@@ -1,0 +1,9 @@
+id,name,start,duration
+S01,Site base,0,5
+S02,Long-side seating terraces,5,15
+S03,End seating terraces,20,10
+S04,Roof support columns,30,10
+S05,Roof panels,40,10
+S06,Seating installation,50,10
+S07,Playing field and turf,60,8
+S08,Goals and field markings,68,2

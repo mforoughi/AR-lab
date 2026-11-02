@@ -1,0 +1,5 @@
+id,name,start,duration
+T01,Site preparation,0,5
+T02,Foundations,5,10
+T03,Columns and beams,15,10
+T04,Roof installation,25,5

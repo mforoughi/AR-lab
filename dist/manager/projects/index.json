@@ -1,0 +1,72 @@
+[
+  {
+    "id": "a87eadcc-b708-4949-885e-d0aede2916a5",
+    "name": "stadium_1",
+    "folder": "Stadiums",
+    "status": "published",
+    "metadata": {
+      "tasks": [
+        {
+          "id": "S01",
+          "name": "Site base",
+          "start": 0,
+          "duration": 5
+        },
+        {
+          "id": "S02",
+          "name": "Long-side seating terraces",
+          "start": 5,
+          "duration": 15
+        },
+        {
+          "id": "S03",
+          "name": "End seating terraces",
+          "start": 20,
+          "duration": 10
+        },
+        {
+          "id": "S04",
+          "name": "Roof support columns",
+          "start": 30,
+          "duration": 10
+        },
+        {
+          "id": "S05",
+          "name": "Roof panels",
+          "start": 40,
+          "duration": 10
+        },
+        {
+          "id": "S06",
+          "name": "Seating installation",
+          "start": 50,
+          "duration": 10
+        },
+        {
+          "id": "S07",
+          "name": "Playing field and turf",
+          "start": 60,
+          "duration": 8
+        },
+        {
+          "id": "S08",
+          "name": "Goals and field markings",
+          "start": 68,
+          "duration": 2
+        }
+      ]
+    },
+    "assets": [
+      {
+        "kind": "thumbnail",
+        "filename": "thumbnail.png",
+        "type": "image/png",
+        "size": 203841,
+        "href": "projects/a87eadcc-b708-4949-885e-d0aede2916a5/thumbnail.png"
+      }
+    ],
+    "created": "2026-11-02T16:30:26.327Z",
+    "updated": "2026-11-02T19:00:00.000Z",
+    "revision": "471dc342-61f5-40c4-b34d-23e2dd75b911"
+  }
+]
